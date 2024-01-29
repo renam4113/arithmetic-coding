@@ -9,11 +9,10 @@ using namespace std;
 
 
 void CodeText(string & S , unordered_map<char, int> & freq, vector<unsigned short> & list, vector<char> & simvol, vector<unsigned short> & b){
-    ofstream out("encode.txt");
-    ofstream fout("code.bin", std::ios_base::binary); 
+    ofstream fout("encode.txt", std::ios_base::binary); 
     string result = "";
-    if(out.is_open()){
-        for(int i = 0; i < list.size(); i++)  out << simvol[i] << " : " << list[i] << endl;
+    if(fout.is_open()){
+        //for(int i = 0; i < list.size(); i++)  out << simvol[i] << " : " << list[i] << endl;
 
         unsigned short l = 0, h = 65535, l_prev, h_prev, delitel = b[(int)b.size() - 1];
         unsigned short First_qtr = (h + 1) / 4; 
@@ -33,7 +32,6 @@ void CodeText(string & S , unordered_map<char, int> & freq, vector<unsigned shor
                     byte_2_size++;
                     if (byte_2_size == 16) {
                         fout.write((char*)&byte_2, 2);
-                        out.write((char*)&byte_2, 2);
                         byte_2 = 0;
                         byte_2_size = 0;
                     }
@@ -42,7 +40,6 @@ void CodeText(string & S , unordered_map<char, int> & freq, vector<unsigned shor
                         byte_2_size++;
                         if (byte_2_size == 16) {
                             fout.write((char*)&byte_2, 2);
-                            out.write((char*)&byte_2, 2);
                             byte_2 = 0;
                             byte_2_size = 0;
                         }
@@ -53,7 +50,6 @@ void CodeText(string & S , unordered_map<char, int> & freq, vector<unsigned shor
                     byte_2_size++;
                     if (byte_2_size == 16) {
                         fout.write((char*)&byte_2, 2);
-                        out.write((char*)&byte_2, 2);
                         byte_2 = 0;
                         byte_2_size = 0;
                     }
@@ -62,7 +58,6 @@ void CodeText(string & S , unordered_map<char, int> & freq, vector<unsigned shor
                         byte_2_size++;
                         if (byte_2_size == 16) {
                             fout.write((char*)&byte_2, 2);
-                            out.write((char*)&byte_2, 2);
                             byte_2 = 0;
                             byte_2_size = 0;
                         }
@@ -85,15 +80,25 @@ void CodeText(string & S , unordered_map<char, int> & freq, vector<unsigned shor
             byte_2 = byte_2 << (16 - byte_2_size);
             fout.write((char*)&byte_2, 2);
         }   
+
+    fout.put('\n');
+
+    
     }
+    
     fout.close();
-    out.close();
+
+    ofstream Fout("encode.txt", std::ios::app);
+    if(Fout.is_open()){
+        for(int i = 0; i < list.size(); i++) Fout << simvol[i] << " : " << list[i] << endl;
+    }
+    Fout.close();
 }
 
 void DecodeText(unordered_map<char, int> & freq, vector<unsigned short> & list, vector<char> & simvol, vector<unsigned short> & b){
     ofstream out("decode.txt");
     string result = "";
-    ifstream fin("code.bin", ios_base::binary);
+    ifstream fin("encode.txt", ios_base::binary);
 
     if(out.is_open()){
 
@@ -201,8 +206,11 @@ int main(){
 
         cin >> z;
 
-        if(z == 1) CodeText(S, freq, list, simvol, b);
-        
+        if(z == 1){
+            CodeText(S, freq, list, simvol, b);
+            coding = true;
+        }
+
         else if (z == 2){
             if(!coding) cout << "в начале закодируйте текст" << endl;
             else DecodeText(freq, list, simvol, b);
