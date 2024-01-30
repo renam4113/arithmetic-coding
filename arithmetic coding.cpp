@@ -146,7 +146,8 @@ void DecodeText(unordered_map<char, int> & freq, vector<unsigned short> & list, 
                     value |= (buf >> (--buf_size) & 1);
                 }
             }
-             out <<static_cast<unsigned char>(simvol[j-1]);
+             if(i + 1 <= DataLength) out <<static_cast<unsigned char>(simvol[j-1]);
+             else  out <<static_cast<unsigned char>(simvol[j]);
         }
     }
     out.close();
